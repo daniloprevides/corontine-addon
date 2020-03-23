@@ -1,0 +1,65 @@
+<ngb-toast class="toast-container btn btn-success"
+  *ngFor="let toast of toastService.toasts"
+  [header]="toast.header" [autohide]="true" [delay]="toast.delay || 5000"
+  (hide)="toastService.remove(toast)"
+>{{toast.body}}</ngb-toast>
+
+<h1>Plugin Store</h1>
+<ul ngbNav #nav="ngbNav" [(activeId)]="activeModel" class="nav-tabs">
+  <li [ngbNavItem]="1">
+    <a ngbNavLink>Items</a>
+    <ng-template ngbNavContent>
+      <div class="card-container row">
+        <div *ngFor="let item of data" class="col-lg-3">
+          <div class="card" style="width: 18rem;">
+            <fa-icon class="addon-image" [icon]="icon"></fa-icon>
+            <div class="card-body">
+              <h5 class="card-title">{{item.name}}</h5>
+              <p class="card-text">{{item.description}}</p>
+              <small>{{item.tags?.join(" ")}}</small>
+            </div>
+            <div class="card-header">
+              <button type="button" class="btn btn-secondary" (click)="addAddon(item)"> Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </li>
+  <li [ngbNavItem]="2">
+    <a ngbNavLink>Add New</a>
+    <ng-template ngbNavContent>
+      <br>
+      <div class="form-group">
+        <label for="name">* Name</label>
+        <input type="text" [(ngModel)]="model.name" class="form-control" id="name" aria-describedby="Addon Name"
+          placeholder="Enter addon name">
+        <small *ngIf="errors.name" id="nameError" class="form-text text-danger">{{errors.name}}</small>
+
+      </div>
+      <div class="form-group">
+        <label for="name">* Addon URL</label>
+        <input type="url" [(ngModel)]="model.url" class="form-control" id="url" aria-describedby="Addon URL"
+          placeholder="Addon url">
+        <small *ngIf="errors.url" id="urlError" class="form-text text-danger">{{errors.url}}</small>
+      </div>
+      <div class="form-group">
+        <label for="name">* Components URL</label>
+        <input type="componentsUrl" [(ngModel)]="model.componentsUrl" class="form-control" id="url"
+          aria-describedby="Components URL" placeholder="Components url">
+        <small *ngIf="errors.componentsUrl" id="urlError" class="form-text text-danger">{{errors.componentsUrl}}</small>
+      </div>
+      <div class="form-group">
+        <label for="description">* Description</label>
+        <textarea class="form-control" [(ngModel)]="model.description" id="description"
+          placeholder="Enter the description of plugin" rows="6"></textarea>
+        <small *ngIf="errors.description" id="urlError" class="form-text text-danger">{{errors.description}}</small>
+      </div>
+      <button type="submit" class="btn btn-secondary" (click)="save()">Save</button>
+    </ng-template>
+  </li>
+</ul>
+<div [ngbNavOutlet]="nav"></div>
+<br>
+
+<vaadin-dialog #modal ></vaadin-dialog>
