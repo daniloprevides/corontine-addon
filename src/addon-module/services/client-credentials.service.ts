@@ -29,6 +29,7 @@ import { AuthDTO } from "../dto/auth.dto";
 import { GrantTypeEnum } from "../enum/grant-type.enum";
 import { CorontineService } from "./corontine.service";
 import { ScopeEnum } from "../enum/scope.enum";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class ClientCredentialsService {
@@ -38,7 +39,8 @@ export class ClientCredentialsService {
     @Inject(forwardRef(() => ScopeRepository))
     private readonly scopeRepository: ScopeRepository,
     private httpService: HttpService,
-    private corontineService: CorontineService
+    private corontineService: CorontineService,
+    private configService:ConfigService
   ) {}
 
   @Transactional()
@@ -93,6 +95,10 @@ export class ClientCredentialsService {
   ): Promise<AuthorizationCodeDTO> {
     if (!newPluginRequest.callback_uri) {
       throw new BadRequestException("Callback url is missing");
+    }
+
+    if (this.configService.get("callbackUrl")){
+      url = this.configService.get("callbackUrl");
     }
 
     const code = v4();
@@ -153,14 +159,17 @@ export class ClientCredentialsService {
       "Plugins",
       credentials,
       {
-        name: "MyPlugin",
-        apiUrl: "http://localhost:5000/api/v1/addon",
-        componentsUrl: "http://localhost:5000/components",
+        name: "stores",
+        apiUrl: `${this.configService.get("callbackUrl") ? this.configService.get("callbackUrl") : "http://localhost:5000" }/api/v1/addon`,
+        componentsUrl: `http://localhost:5000/components`,
         environment: "DEVELOPMENT",
         components: [
           {
-            name: "MyComponent",
-            url: "http://localhost:5000/components/components.js"
+            name: "stores",
+            url:  `${this.configService.get("callbackUrl") ? this.configService.get("callbackUrl") : "http://localhost:5000" }/components/components.js`,
+            fields: [
+              {name:"corona-virus", description: "Corona Virus Component", type:"SINGLE", needApi: false, defaultPropertyBind: "value", defaultEvent: "changed", allowInComposer: true}
+            ]
           }
         ]
       }
@@ -174,8 +183,8 @@ export class ClientCredentialsService {
     );
     const customPageResponse = await this.corontineService.addCustomPage(
       credentials,
-      "teste",
-      "description teste",
+      "addon-installer",
+      "Addon installer Screep",
       component,
       newPlugin,
       "addon-store"
@@ -225,7 +234,7 @@ export class ClientCredentialsService {
     const scope = `token_info page_create page_update page_delete page_read 
     plugin_create plugin_update plugin_delete plugin_read 
     components_create components_update components_delete components_read 
-    fields_read scope_create menu_add_entry`;
+    fields_read fields_create scope_create menu_add_entry`;
 
     return scope;
   }

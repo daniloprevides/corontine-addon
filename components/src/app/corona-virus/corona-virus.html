@@ -1,0 +1,15 @@
+<ngb-toast class="toast-container btn btn-success"
+  *ngFor="let toast of toastService.toasts"
+  [header]="toast.header" [autohide]="true" [delay]="toast.delay || 5000"
+  (hide)="toastService.remove(toast)"
+>{{toast.body}}</ngb-toast>
+
+<h1 class="text-center">Corona Virus</h1>
+<br>
+<div class="chart-container" id="chart" style="position: relative; height:40vh; width:100%">
+  <canvas #canvas id="canvas">{{ lineChart }}</canvas>
+</div>
+
+<br>
+
+<vaadin-dialog #modal ></vaadin-dialog>

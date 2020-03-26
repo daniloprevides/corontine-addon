@@ -4,6 +4,7 @@ export default () => ({
     env: process.env.ENV || "DEVELOPMENT",
     corsOrigin: "*",
     authorizationUrl: process.env.AUTHORIZATION_URL || "http://localhost:3000",
+    callbackUrl: process.env.CALLBACK_URL,
     api: {
         title: process.env.API_TITLE || "Addons",
         description: process.env.API_DESCRIPTION || 'Addons',

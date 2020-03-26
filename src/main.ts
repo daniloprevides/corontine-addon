@@ -38,7 +38,7 @@ async function bootstrap() {
 
   (app as any).setBaseViewsDir(join(__dirname, "..", "views"));
   (app as any).setViewEngine("hbs");
-  const folderPath = join(__dirname, "../../src/views/public");
+  const folderPath = join(__dirname, "../src/views/public");
   console.debug("Public path", folderPath);
   (app as any).useStaticAssets(folderPath, {
     index: false,
